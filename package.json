@@ -1,6 +1,6 @@
 {
   "$schema": "./tsconfig-schema.json",
-  "name": "react-mabdg-hooks",
+  "name": "react-customary-hooks",
   "version": "1.0.0",
   "description": "Some useful custom hooks that make react development faster and easier",
   "main": "./lib/index.js",
