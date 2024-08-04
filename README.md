@@ -12,13 +12,13 @@ These are some useful custom React hooks that will make your development journey
 Use the node.js package manager [npm](https://www.npmjs.com/) to install **`react-useful-hooks`**.
 
 ```bash
-npm install react-useful-hooks --save
+npm install react-mabdg-hooks --save
 ```
 
 Alternatively, you can install it through [yarn](https://yarnpkg.com/).
 
 ```bash
-yarn add react-useful-hooks
+yarn add react-mabdg-hooks
 ```
 
 ## **`useClassNames`** Hook:
@@ -150,6 +150,9 @@ const ComponentWithStyle = ({ items, highlightedIndex }) => {
 export default ComponentWithStyle;
 ```
 
+## **`useClipboard`** Hook:
+
+In most cases, attributing class names and ids to HTML and JSX elements is not a big issue. Things may be more complicated in the cases of using CSS preprocessors (ie. SASS) and using multiple styling resources as well as the urge of the need of the conditional rendering and styling. The hook presents two functions: **`combine()`** and **`class()`**.
 
 ## Contributing
 
