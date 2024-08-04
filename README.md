@@ -9,150 +9,265 @@ These are some useful custom React hooks that will make your development journey
 
 ## Installation
 
-Use the node.js package manager [npm](https://www.npmjs.com/) to install **`react-useful-hooks`**.
+Use the node.js package manager [npm](https://www.npmjs.com/) to install **`react-customary-hooks`**.
 
 ```bash
-npm install react-mabdg-hooks --save
+npm install react-customary-hooks --save
 ```
 
 Alternatively, you can install it through [yarn](https://yarnpkg.com/).
 
 ```bash
-yarn add react-mabdg-hooks
+yarn add react-customary-hooks
 ```
 
 ## **`useClassNames`** Hook:
 
-In most cases, attributing class names and ids to HTML and JSX elements is not a big issue. Things may be more complicated in the cases of using CSS preprocessors (ie. SASS) and using multiple styling resources as well as the urge of the need of the conditional rendering and styling. The hook presents two functions: **`combine()`** and **`class()`**.
+The useClassNames hook provides a flexible way to manage class names and IDs for HTML elements. It allows you to conditionally apply class names or IDs and combine multiple class names into a single string.
 
-* The **`class()`** function: It simply a function that takes the class name as parameter and may or may not transform it into `id` depending on the developer need:
-
-
-```scss
-/* Style **/
-.comp {
-  .t1 {
-    color: #f00;
-  }
-
-  .t2 {
-    color: #0f0;
-  }
-
-  .t3 { 
-    color: #0f0;  /* with the use of the class() function, 
-The browser will read it as  #t3 */
-  }
-
-  .t4 {
-    color: #ff0;
-  }
-}
-```
-```typescript
-/* Component **/
-import styles from 'path/to/styles.scss';
-import { useClassNames } from 'react-useful-hooks';
-
-const ComponentWithStyle = ({ someRandomProp }) => {
-  const { class: getClass } = useClassNames(); // extracted class function as getClass() 
-  return (
-    <div className={styles.comp}>
-      <p className={styles.t1}>Text1</p> 
-      {/* This is the standard use */}
-      <p className={getClass(styles.t2)}>Text2</p> 
-      {/* This is more dynamical and equivalent to <p className={styles.t2}>Text2</p> */}
-      <p className={getClass(styles.t3, { id: true })}>Text3</p> 
-      {/* This is equivalent to <p id={styles.t3}>Text3</p> */}
-      <p className={getClass(styles.t4, { id: !!someRandomProp })}>Text4</p> 
-      {/* In this case it will allocate an id only if someRandomProp has truthy value */}
-    </div>
-  )
-}
-
-export default ComponentWithStyle;
-```
-
-* The **`combine()`** function: takes multiple class names as parameters and apply the style defined in all of them. In this case, standard rules of CSS priorities will be applied and the **last** style to be defined is the most prioritized.
-
-```scss
-/* Style **/
-.component {
-  .textColor {
-    color: #f00;
-  }
-
-  .textSize {
-    font-size: 2rem;
-  }
-}
-```
+> **Usage:**
 
 ```typescript
-/* Component **/
-import styles from 'path/to/styles.scss';
-import { useClassNames } from 'react-useful-hooks';
+import { useState } from 'react';
+import { useClassNames } from 'react-customary-hooks';
 
-const ComponentWithStyle = (props) => {
-  const { combine } = useClassNames(); 
+const ClassNamesExample = () => {
+  const [isActive, setIsActive] = useState(false);
+  const [isHighlighted, setIsHighlighted] = useState(false);
+  const { class: getClass, combine } = useClassNames();
+
+  const handleToggleActive = () => setIsActive(!isActive);
+  const handleToggleHighlight = () => setIsHighlighted(!isHighlighted);
+
+  const dynamicClass = combine(
+    'base-class',
+    isActive && 'active-class',
+    isHighlighted && 'highlighted-class'
+  );
+
+  const elementProps = getClass('dynamic-element', { id: isActive });
+
   return (
     <div>
-      <p className={combine(styles.textColor, styles.textSize)}>Text1</p> 
-      {/* Text will be red with 2rem size */} 
+      <button onClick={handleToggleActive}>
+        Toggle Active ({isActive ? 'Active' : 'Inactive'})
+      </button>
+      <button onClick={handleToggleHighlight}>
+        Toggle Highlight ({isHighlighted ? 'Highlighted' : 'Not Highlighted'})
+      </button>
+      <div {...elementProps} className={dynamicClass}>
+        This element has dynamic class names and ID.
+      </div>
     </div>
-  )
-}
-
-export default ComponentWithStyle;
-```
-
-* The conditional styling and rendering: This hook is very helpful as it will facilitate conditional styling:
-
-```typescript
-import { Fragment, useState } from 'react';
-import styles from 'path/to/styles.scss';
-import { useClassNames } from 'react-useful-hooks';
-
-const ComponentWithStyle = ({ items, highlightedIndex }) => {
-  const [isActive, setIsActive] = useState(false);
-  const { combine } = useClassNames();
-
-  const handleClick = () => setIsActive(!isActive);
-
-  const buttonClass = combine(
-    'btn',
-    isActive && 'btn-active', // conditional styling
-    'btn-primary'
   );
-  return (
-    <Fragment>
-       <button className={buttonClass} onClick={handleClick}>
-         Toggle
-      </button> 
-      <ul>
-        {items.map((item, index) => {
-          const itemClass = combine(
-            'list-item',
-            index === highlightedIndex && 'highlighted'
-          );
+};
 
-          return (
-            <li key={item.id} className={itemClass}> {/*Dynamically Applying Styles in a List Component*/}
-              {item.name}
-            </li>
-          );
-        })}
-      </ul>
-    </Fragment>
-  )
-}
+export default ClassNamesExample;
 
-export default ComponentWithStyle;
 ```
+> **API:**
+
+* **`class(className: string, options: Options): { id?: string; className?: string }`**: Conditionally applies an ID or class name to an element based on the options.
+* **`combine(...classNames: any[]): string`**: Combines multiple class names into a single string, filtering out falsy values.
+
+> **Options:**
+
+* **`id: boolean`**: If true, applies the class name as an ID; otherwise, applies it as a class name.
 
 ## **`useClipboard`** Hook:
 
-In most cases, attributing class names and ids to HTML and JSX elements is not a big issue. Things may be more complicated in the cases of using CSS preprocessors (ie. SASS) and using multiple styling resources as well as the urge of the need of the conditional rendering and styling. The hook presents two functions: **`combine()`** and **`class()`**.
+This hook provides an easy-to-use interface for interacting with the clipboard in a React application. This hook allows you to copy, paste, and cut text to and from the clipboard, as well as manage the clipboard's content state. It offers a convenient way to handle clipboard operations, encapsulating the logic and state management needed for these tasks. It is used generally in applications that include text editors or for accessibility.
+
+> **Usage:**
+
+```typescript
+import React, { useState } from 'react';
+import { useClipboard } from 'react-customary-hooks';
+
+const ClipboardExample = () => {
+  const [inputText, setInputText] = useState('');
+  const [pastedText, setPastedText] = useState('');
+  const { 
+    copyToClipboard, 
+    pasteFromClipboard, 
+    cutToClipboard, 
+    getClipboardContent, 
+    full 
+  } = useClipboard();
+
+  const handleCopy = () => {
+    copyToClipboard(inputText);
+  };
+
+  const handlePaste = async () => {
+    const text = await pasteFromClipboard();
+    setPastedText(text);
+  };
+
+  const handleCut = () => {
+    cutToClipboard(inputText);
+    setInputText('');
+  };
+
+  const handleCheckClipboard = () => {
+    const content = getClipboardContent();
+    console.log('Current clipboard content:', content);
+  };
+
+  return (
+    <div>
+      <input 
+        type="text" 
+        value={inputText} 
+        onChange={(e) => setInputText(e.target.value)} 
+        placeholder="Enter text to copy or cut" 
+      />
+      <button onClick={handleCopy}>Copy to Clipboard</button>
+      <button onClick={handlePaste}>Paste from Clipboard</button>
+      <button onClick={handleCut}>Cut to Clipboard</button>
+      <button onClick={handleCheckClipboard}>Check Clipboard Content</button>
+      <div>
+        <p>Clipboard Full: {full ? 'Yes' : 'No'}</p>
+        <p>Pasted Text: {pastedText}</p>
+      </div>
+    </div>
+  );
+};
+
+export default ClipboardExample;
+
+```
+
+> **API:**
+
+* **`copyToClipboard(text: string): Promise<void>`**: Copies the provided text to the clipboard.
+* **`pasteFromClipboard(): Promise<string>`**: Pastes text from the clipboard and returns it.
+* **`cutToClipboard(text: string): Promise<void>`**: Cuts the provided text to the clipboard (copies and then clears the text).
+* **`getClipboardContent(): string`**: Returns the current content of the clipboard.
+* **`full: boolean`**: Indicates whether the clipboard has content.
+
+## **`useGeo`** Hook:
+
+This hook provides an interface to access the user's geographic location using the browser's Geolocation API. It manages the position, any errors, and the loading state, making it simple to integrate geolocation functionality into your React components.
+
+> **Usage:**
+
+```typescript
+import { useGeo } from 'react-customary-hooks';
+
+const GeoLocationExample = () => {
+  const { position, error, loading } = useGeo();
+
+  return (
+    <div>
+      {loading && <p>Loading...</p>}
+      {error && (
+        <p>Error {error.code}: {error.message}</p>
+      )}
+      {position && (
+        <div>
+          <p>Latitude: {position.latitude}</p>
+          <p>Longitude: {position.longitude}</p>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default GeoLocationExample;
+
+```
+
+> **API:**
+
+* **`position: { latitude: number, longitude: number } | null`**: The user's current geographic position.
+* **`error: { code: number, message: string } | null`**: An error object containing the error code and message if there is an error retrieving the position.
+* **`loading: boolean`**: A boolean indicating whether the geolocation request is in progress.
+
+
+## **`useMediaQuery`** Hook:
+
+This hook provides a way to detect and respond to CSS media query changes in a React component. It allows you to create responsive components by checking if a media query matches the current viewport size.
+
+> **Usage:**
+
+```typescript
+import { useMediaQuery } from './useMediaQuery';
+
+const MediaQueryExample = () => {
+  const isLargeScreen = useMediaQuery('(min-width: 1024px)');
+  const isMediumScreen = useMediaQuery('(min-width: 768px) and (max-width: 1023px)');
+  const isSmallScreen = useMediaQuery('(max-width: 767px)');
+
+  return (
+    <div>
+      {isLargeScreen && <p>Large Screen</p>}
+      {isMediumScreen && <p>Medium Screen</p>}
+      {isSmallScreen && <p>Small Screen</p>}
+    </div>
+  );
+};
+
+export default MediaQueryExample;
+
+```
+
+> **API:**
+
+* **`useMediaQuery(query: string): boolean`**: Takes a media query string and returns a boolean indicating whether the media query matches the current viewport size.
+* 
+
+## **`usePortal`** Hook:
+
+This hook simplifies the process of creating and managing DOM elements for portals in React applications. It ensures that a specified DOM element is created and cleaned up as needed, making it easier to implement portals.
+
+> **Usage:**
+
+```typescript
+import React from 'react';
+import ReactDOM from 'react-dom';
+import usePortal from './usePortal';
+
+const Modal = ({ children, id }) => {
+  const portalRoot = usePortal(id);
+
+  if (!portalRoot) return null;
+
+  return ReactDOM.createPortal(
+    <div className="modal">
+      <div className="modal-content">
+        {children}
+      </div>
+    </div>,
+    portalRoot
+  );
+};
+
+const PortalExample = () => {
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
+
+  return (
+    <div>
+      <button onClick={toggleModal}>
+        {isModalOpen ? 'Close Modal' : 'Open Modal'}
+      </button>
+      {isModalOpen && <Modal id="modal-root">This is a modal!</Modal>}
+    </div>
+  );
+};
+
+export default PortalExample;
+
+```
+
+> **API:**
+
+* **`usePortal(id: string): HTMLElement | null`**: Takes an `id` string and returns a reference to the DOM element where the portal will be rendered. If the element does not exist, it creates and appends a new one to the document body..
+
 
 ## Contributing
 
