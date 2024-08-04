@@ -1,4 +1,4 @@
-# React Useful Hooks
+# React Customary Hooks
 
 Hello React Community! 👋
 I hereby present a modest gift for you!
