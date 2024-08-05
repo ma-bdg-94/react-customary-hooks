@@ -1,7 +1,7 @@
 {
   "$schema": "./tsconfig-schema.json",
   "name": "react-customary-hooks",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Some useful custom hooks that make react development faster and easier",
   "main": "./lib/index.js",
   "scripts": {
